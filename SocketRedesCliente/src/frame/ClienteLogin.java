@@ -9,6 +9,7 @@ import Enum.Acao;
 import PalavraoException.Palavrao;
 import bean.PackageMessage;
 import java.awt.HeadlessException;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -16,6 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 import servicoClienteNet.ServicoCliente;
 
 public class ClienteLogin extends javax.swing.JFrame {
@@ -24,6 +27,7 @@ public class ClienteLogin extends javax.swing.JFrame {
     private Palavrao p = new Palavrao();
     private Socket socket;
     private ServicoCliente servico = new ServicoCliente();
+    DefaultMutableTreeNode raiz;
 
     /**
      * Creates new form Cliente
@@ -55,11 +59,37 @@ public class ClienteLogin extends javax.swing.JFrame {
         servico.enviarMensagem(mensagem);
     }
 
+    public void setaArquivosCompartilhados(PackageMessage mensagem) {
+
+        for (int i = 0; i < mensagem.getListaOnline().size(); i++) {
+            if (!(mensagem.getListaOnline().get(i).equals(this.jTextFieldNome.getText()))) {
+                /**System.out.println (mensagem.getListaOnline().get(i));
+                
+                 * File dir = new File(diretorio); File[] arquivos =
+                 * dir.listFiles(); if (arquivos != null) { int length =
+                 * arquivos.length; for (int i = 0; i < length; ++i) { File f =
+                 * arquivos[i]; System.out.println(f.getPath()); if (f.isFile())
+                 * { DefaultMutableTreeNode arquivo = new
+                 * DefaultMutableTreeNode(f.getName());
+                 *
+                 * pasta.add(arquivo); } else if (f.isDirectory()) {
+                 * System.out.println(f.getName() + " é uma pasta!"); } } }
+                 */
+                //arvoreArquivos.repaint();
+                //raiz.add();
+            }
+        }
+        jTree_Arquivos = new JTree(raiz);
+        jScrollPane_Arquivos.repaint();
+        jScrollPane_Arquivos.setViewportView(jTree_Arquivos);
+    }
+
     public void setaOnline(PackageMessage mensagem) {
         DefaultListModel modelo = new DefaultListModel();
         for (int i = 0; i < mensagem.getListaOnline().size(); i++) {
             if (!(mensagem.getListaOnline().get(i).equals(this.jTextFieldNome.getText()))) {
                 modelo.addElement(mensagem.getListaOnline().get(i));
+                System.out.println (mensagem.getListaOnline().get(i));
             }
         }
         jListOnlines.setModel(modelo);
@@ -83,8 +113,11 @@ public class ClienteLogin extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jListOnlines = new javax.swing.JList();
         jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jTabbedPane_ChatArquivos = new javax.swing.JTabbedPane();
+        jScrollPane_Chat = new javax.swing.JScrollPane();
         jTextAreaSomenteLeitura = new javax.swing.JTextArea();
+        jScrollPane_Arquivos = new javax.swing.JScrollPane();
+        jTree_Arquivos = new javax.swing.JTree();
         jPanel4 = new javax.swing.JPanel();
         btnEnviar = new javax.swing.JButton();
         btnLimpar = new javax.swing.JButton();
@@ -155,7 +188,7 @@ public class ClienteLogin extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -163,17 +196,25 @@ public class ClienteLogin extends javax.swing.JFrame {
         jTextAreaSomenteLeitura.setEditable(false);
         jTextAreaSomenteLeitura.setColumns(20);
         jTextAreaSomenteLeitura.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaSomenteLeitura);
+        jScrollPane_Chat.setViewportView(jTextAreaSomenteLeitura);
+
+        jTabbedPane_ChatArquivos.addTab("Chat", jScrollPane_Chat);
+
+        raiz = new DefaultMutableTreeNode("Arquivos Chat");
+        jTree_Arquivos = new JTree(raiz);
+        jScrollPane_Arquivos.setViewportView(jTree_Arquivos);
+
+        jTabbedPane_ChatArquivos.addTab("Arquivos", jScrollPane_Arquivos);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane_ChatArquivos)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+            .addComponent(jTabbedPane_ChatArquivos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -247,8 +288,7 @@ public class ClienteLogin extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -259,18 +299,18 @@ public class ClienteLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
-        
+
         //cria um novo BEAN 
         mensagem = new PackageMessage();
         if (!jTextFieldNome.getText().equals("") && !jTextFieldNome.getText().equals("Todos")) {
-           
-            
+
             //setando o BEAN
             this.mensagem.setNome(this.jTextFieldNome.getText());
             this.mensagem.setAcao(Acao.CONECTAR);
             //aqui eu informo ao SERVER SOCKET para CONECTAR e manda o BEAN MENSAGEM 
             this.socket = servico.conectar(mensagem);
             //inicializo a Thread Listener para esperar a resposta do servidor
+
             new Thread(new ListenerSocket()).start();
 
         } else {
@@ -282,20 +322,20 @@ public class ClienteLogin extends javax.swing.JFrame {
 
         if (!jTextAreaTextoAEnviar.getText().equals("")) {
             if (!jListOnlines.isSelectionEmpty()) {
-                if(!p.verificaPalavrao(jTextAreaTextoAEnviar.getText())){
-                //criou um novo BEAN
-                mensagem = new PackageMessage();
+                if (!p.verificaPalavrao(jTextAreaTextoAEnviar.getText())) {
+                    //criou um novo BEAN
+                    mensagem = new PackageMessage();
 
-                this.mensagem.setNome(jTextFieldNome.getText());
-                this.mensagem.setEnviarPara((String) jListOnlines.getSelectedValue());
-                this.mensagem.setMensagem(this.jTextAreaTextoAEnviar.getText());
-                this.mensagem.setAcao(Acao.ENVIAR);
+                    this.mensagem.setNome(jTextFieldNome.getText());
+                    this.mensagem.setEnviarPara((String) jListOnlines.getSelectedValue());
+                    this.mensagem.setMensagem(this.jTextAreaTextoAEnviar.getText());
+                    this.mensagem.setAcao(Acao.ENVIAR);
 
-                jTextAreaSomenteLeitura.append("Voce diz: " + mensagem.getMensagem() + "\n");
-                jTextAreaTextoAEnviar.setText("");
-                // envio o servidor para que ele trate de acordo a acao setada aqui (Acao.ENVIAR)
-                servico.enviarMensagem(this.mensagem);
-                }else{
+                    jTextAreaSomenteLeitura.append("Voce diz: " + mensagem.getMensagem() + "\n");
+                    jTextAreaTextoAEnviar.setText("");
+                    // envio o servidor para que ele trate de acordo a acao setada aqui (Acao.ENVIAR)
+                    servico.enviarMensagem(this.mensagem);
+                } else {
                     JOptionPane.showMessageDialog(this, "Palavroes nao permitidos");
                     jTextAreaTextoAEnviar.setText("");
                 }
@@ -324,11 +364,10 @@ public class ClienteLogin extends javax.swing.JFrame {
         this.mensagem.setEnviarPara((String) jListOnlines.getSelectedValue());
         this.mensagem.setMensagem(this.jTextAreaTextoAEnviar.getText());
         this.mensagem.setAcao(Acao.DESCONECTAR);
-        
+
         jTextAreaTextoAEnviar.setText("");
         this.jTextFieldNome.setText("");
-        
-        
+
         servico.enviarMensagem(mensagem);
 
     }//GEN-LAST:event_btnSairActionPerformed
@@ -351,12 +390,15 @@ public class ClienteLogin extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane_Arquivos;
+    private javax.swing.JScrollPane jScrollPane_Chat;
+    private javax.swing.JTabbedPane jTabbedPane_ChatArquivos;
     private javax.swing.JTextArea jTextAreaSomenteLeitura;
     private javax.swing.JTextArea jTextAreaTextoAEnviar;
     private javax.swing.JTextField jTextFieldNome;
+    private javax.swing.JTree jTree_Arquivos;
     // End of variables declaration//GEN-END:variables
 
     private class ListenerSocket implements Runnable {
@@ -388,15 +430,19 @@ public class ClienteLogin extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog(null, "Conexao Realizada");
                             conectou();
                             enviaOnlines(mensagem);
+                            setaArquivosCompartilhados(mensagem);
                         }
 
                     } else if (mensagem.getAcao().equals(Acao.DESCONECTAR)) {
                         setaOnline(mensagem);
+                        setaArquivosCompartilhados(mensagem);
+
                     } else if (mensagem.getAcao().equals(Acao.RECEBA)) {
                         recebaTexto(mensagem);
                         //  setaOnline(mensagem);
                     } else if (mensagem.getAcao().equals(Acao.ONLINE)) {
                         setaOnline(mensagem);
+                        
                     }
 
                 }

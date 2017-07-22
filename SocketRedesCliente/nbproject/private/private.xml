@@ -2,14 +2,14 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/servicoClienteNet/ServicoCliente.java</file>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteOnlines.java</file>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteMain.java</file>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteLogin.java</file>
-        </group>
         <group name="Java">
             <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteLogin.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/bean/PackageMessage.java</file>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/frame/ClienteLogin.java</file>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/Enum/Acao.java</file>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/servicoClienteNet/ServicoCliente.java</file>
         </group>
     </open-files>
 </project-private>
