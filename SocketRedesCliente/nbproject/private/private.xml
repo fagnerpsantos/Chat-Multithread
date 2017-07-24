@@ -2,14 +2,16 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/servicoClienteNet/ServicoCliente.java</file>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteOnlines.java</file>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteMain.java</file>
-            <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteLogin.java</file>
-        </group>
         <group name="Java">
             <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteLogin.java</file>
+        </group>
+        <group>
+            <file>file:/Users/fagnerpsantos/Developer/Java/Chat/SocketRedesCliente/src/main/SocketRedesCliente.java</file>
+            <file>file:/Users/fagnerpsantos/Developer/Java/Chat/SocketRedesCliente/src/main/MulticastSocketClient.java</file>
+            <file>file:/Users/fagnerpsantos/Developer/Java/Chat/SocketRedesCliente/src/bean/PackageMessage.java</file>
+            <file>file:/Users/fagnerpsantos/Developer/Java/Chat/SocketRedesCliente/src/frame/ChatClient.java</file>
+            <file>file:/Users/fagnerpsantos/Developer/Java/Chat/SocketRedesCliente/src/servicoClienteNet/ServicoCliente.java</file>
+            <file>file:/Users/fagnerpsantos/Developer/Java/Chat/SocketRedesCliente/src/frame/LoginCliente.java</file>
         </group>
     </open-files>
 </project-private>
