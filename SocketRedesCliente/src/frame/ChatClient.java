@@ -9,8 +9,12 @@ import Enum.Acao;
 import PalavraoException.Palavrao;
 import bean.PackageMessage;
 import java.awt.HeadlessException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
@@ -24,6 +28,7 @@ public class ChatClient extends javax.swing.JFrame {
     private PackageMessage msg = new PackageMessage();
     private Palavrao p = new Palavrao();
     private Socket sckt;
+    private MulticastSocket multi;
     private ServicoCliente servico;
     
 
@@ -32,11 +37,12 @@ public class ChatClient extends javax.swing.JFrame {
      * @param socketConexao
      * @param mensagem
      */
-    public ChatClient(Socket socketConexao, PackageMessage mensagem, ServicoCliente servico) {
+    public ChatClient(Socket socketConexao, PackageMessage mensagem, ServicoCliente servico, MulticastSocket multi) throws ClassNotFoundException, IOException {
         initComponents();
         this.sckt = socketConexao;
         this.msg = mensagem;
         this.servico = servico;
+        this.multi = multi;
         nomeUsuarioLabel.setText(msg.getNome());
         new Thread(new ChatClient.ListenerSocket()).start();        
         this.setLocation(400, 200);
@@ -49,12 +55,8 @@ public class ChatClient extends javax.swing.JFrame {
 
     }
 
-    public void recebaTexto(PackageMessage mensagem) {
-        if(mensagem.getEnviarPara().equals("Todos")){
-            this.jTextAreaSomenteLeitura.append(mensagem.getNome() + " para TODOS: " + mensagem.getMensagem() + "\n");
-        }else{
-            this.jTextAreaSomenteLeitura.append(mensagem.getNome() + " diz: " + mensagem.getMensagem() + "\n");
-        }
+    public void recebaTexto(PackageMessage mensagem) throws IOException, ClassNotFoundException {    
+            this.jTextAreaSomenteLeitura.append(mensagem.getNome() + " diz: " + mensagem.getMensagem() + "\n");        
 
     }
 
@@ -225,26 +227,7 @@ public class ChatClient extends javax.swing.JFrame {
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
 
         if (!jTextAreaTextoAEnviar.getText().equals("")) {
-            if (!jListOnlines.isSelectionEmpty()) {
-                if(jListOnlines.getSelectedValue().equals("Todos")){
-                    msg = new PackageMessage();
-
-                this.msg.setNome(nomeUsuarioLabel.getText());
-                this.msg.setEnviarPara((String) jListOnlines.getSelectedValue());
-                this.msg.setMensagem(this.jTextAreaTextoAEnviar.getText());
-                this.msg.setAcao(Acao.ENVIAR);
-
-                jTextAreaSomenteLeitura.append("Voce diz: " + msg.getMensagem() + "\n");
-                jTextAreaTextoAEnviar.setText("");
-                    try {
-                        servico.enviarMensagemTodos(msg);
-                    } catch (UnknownHostException ex) {
-                        Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                }else{
+            if (!jListOnlines.isSelectionEmpty()) {                
                 if(!p.verificaPalavrao(jTextAreaTextoAEnviar.getText())){
                 //criou um novo BEAN
                 msg = new PackageMessage();
@@ -256,7 +239,7 @@ public class ChatClient extends javax.swing.JFrame {
 
                 jTextAreaSomenteLeitura.append("Voce diz: " + msg.getMensagem() + "\n");
                 jTextAreaTextoAEnviar.setText("");
-                    try {
+                    try {                        
                         // envio o servidor para que ele trate de acordo a acao setada aqui (Acao.ENVIAR)
                         servico.enviarMensagem(this.msg);
                     } catch (ClassNotFoundException ex) {
@@ -266,7 +249,7 @@ public class ChatClient extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Palavroes nao permitidos");
                     jTextAreaTextoAEnviar.setText("");
                 }
-                }
+                
             } else {
                 JOptionPane.showMessageDialog(this, "Selecione alguem para enviar!");
             }
@@ -285,6 +268,30 @@ public class ChatClient extends javax.swing.JFrame {
     login.setVisible(true);
     this.dispose();
     }*/
+    
+    public void receberMulti() throws IOException, ClassNotFoundException{
+            
+           try {
+            
+            byte[] data = new byte[4];
+            //cria o datagrama pra receber a msg
+            DatagramPacket packet = new DatagramPacket(data, data.length);
+            this.multi.receive(packet);
+
+            // now we know the length of the payload
+            byte[] buffer = new byte[1024];
+            packet = new DatagramPacket(buffer, buffer.length);
+            this.multi.receive(packet);
+
+            ByteArrayInputStream baos = new ByteArrayInputStream(buffer);
+            ObjectInputStream oos = new ObjectInputStream(baos);
+            PackageMessage c1 = (PackageMessage) oos.readObject();
+            recebaTexto(c1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -306,12 +313,14 @@ public class ChatClient extends javax.swing.JFrame {
     public class ListenerSocket implements Runnable {
 
         private ObjectInputStream input;
+        private ObjectInputStream input2;
+        private ByteArrayInputStream binput;
         private PackageMessage mensagem;
         private ChatClient chat;
-
-        public ListenerSocket() {
+     
+        public ListenerSocket() throws ClassNotFoundException, IOException {
             // vou inicializar o input com um INPUT STREAM que o servidor vai passar
-            try {
+            try {                
                 this.input = new ObjectInputStream(sckt.getInputStream());
             } catch (IOException ex) {
                 Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -323,7 +332,7 @@ public class ChatClient extends javax.swing.JFrame {
         public void run() {
             try {
                 // inicializo o BEAN MENSAGEM com o Objeto salvo no INPUT e rodo enquanto diferente de nulo o objeto
-                while ((mensagem = (PackageMessage) input.readObject()) != null) {
+                while ((mensagem = (PackageMessage) input.readObject()) != null){
                     switch (mensagem.getAcao()) {
                         case CONECTAR:
                             if (mensagem.getConect().equals("ErroConect")) {
@@ -339,9 +348,13 @@ public class ChatClient extends javax.swing.JFrame {
                             setaOnline(mensagem);
                             break;
                         case RECEBA:
+                            System.out.println("chegou");
                             recebaTexto(mensagem);
                             //  setaOnline(mensagem);
                             break;
+                        case ENVIAR_TODOS:
+                            System.out.println("todo mundo");
+                            receberMulti();
                         case ONLINE:
                             setaOnline(mensagem);
                             break;

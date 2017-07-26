@@ -7,6 +7,8 @@ package frame;
 
 import Enum.Acao;
 import bean.PackageMessage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -127,10 +129,31 @@ public class Servidor extends javax.swing.JFrame {
 
     //Falta implementar
       private void enviarParaTodosCliente(PackageMessage mensagem, ObjectOutputStream output) {
-        mensagem.setAcao(Acao.RECEBA);
-        for (int i = 0; i < listaNomes.size(); i++) {
-                enviarMensagem(mensagem, listaOutput.get(i));
+        try {
+            mensagem.setAcao(Acao.RECEBA);
+            byte[] b = mensagem.getMensagem().getBytes();
+            //endereço de grupo da Classe D
+            InetAddress addr = InetAddress.getByName("239.0.0.1");
+            //socket não confiável para envio e recebimento de dados
+            DatagramSocket ds = new DatagramSocket();
+            //datagrama - envelope de dados
             
+            //envio do datagrama via DatagramSocket
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream (baos);
+            oos.writeObject(mensagem);
+            oos.flush();
+            byte[] bytes = baos.toByteArray();
+            DatagramPacket pkg = new DatagramPacket(bytes, bytes.length, addr, 12347);
+            
+            PackageMessage msg = new PackageMessage();
+            msg.setAcao(Acao.ENVIAR_TODOS);
+            for (int i = 0; i < listaNomes.size(); i++) {                
+                    enviarMensagem(msg, listaOutput.get(i));                
+            }
+            ds.send(pkg);
+        } catch (Exception e) {
+            System.out.println("Nao foi possivel enviar a mensagem");
         }
 
     }
@@ -228,7 +251,7 @@ public class Servidor extends javax.swing.JFrame {
                         if(mensagem.getEnviarPara().equals("Todos")){
                             enviarParaTodosCliente(mensagem, output);
                         }else{
-                        enviarParaCliente(mensagem, output);
+                            enviarParaCliente(mensagem, output);
                         }
                     } else if (mensagem.getAcao().equals(Acao.ONLINE)) {
                         mandaOnlines(mensagem, output);

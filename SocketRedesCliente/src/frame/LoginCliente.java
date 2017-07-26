@@ -7,7 +7,12 @@ package frame;
 
 import Enum.Acao;
 import bean.PackageMessage;
+import java.io.IOException;
+import java.net.MulticastSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import servicoClienteNet.ServicoCliente;
 
@@ -18,6 +23,7 @@ import servicoClienteNet.ServicoCliente;
 public class LoginCliente extends javax.swing.JFrame {
 private PackageMessage mensagem = new PackageMessage();
     private Socket socket;
+    private MulticastSocket multi;
     private ServicoCliente servico = new ServicoCliente();
     /**
      * Creates new form LoginCliente
@@ -99,9 +105,21 @@ private PackageMessage mensagem = new PackageMessage();
             this.mensagem.setAcao(Acao.CONECTAR);
             //aqui eu informo ao SERVER SOCKET para CONECTAR e manda o BEAN MENSAGEM
             this.socket = servico.conectar(mensagem);
-            //inicializo a Thread Listener para esperar a resposta do servidor
+            try {
+                this.multi = servico.conectarMulticast();
+            } catch (IOException ex) {
+                Logger.getLogger(LoginCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-            new ChatClient(this.socket, this.mensagem, this.servico).setVisible(true);
+            try {
+                //inicializo a Thread Listener para esperar a resposta do servidor
+
+                new ChatClient(this.socket, this.mensagem, this.servico, this.multi).setVisible(true);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(LoginCliente.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(LoginCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
             setVisible(false);
             
 
