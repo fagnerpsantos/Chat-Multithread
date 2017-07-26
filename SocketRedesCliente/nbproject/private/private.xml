@@ -6,9 +6,12 @@
             <file>file:/C:/Users/Ricardo/Documents/NetBeansProjects/SocketRedesCliente/src/frame/ClienteLogin.java</file>
         </group>
         <group>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/main/SocketRedesCliente.java</file>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/bean/ReceberAquivo.java</file>
             <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/bean/PackageMessage.java</file>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/frame/TelaEnviarArquivo.java</file>
             <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/frame/ClienteLogin.java</file>
-            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/Enum/Acao.java</file>
+            <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/bean/EnviarArquivo.java</file>
             <file>file:/C:/Users/Nailton/Documents/NetBeansProjects/Redes2/Chat-Multithread/SocketRedesCliente/src/servicoClienteNet/ServicoCliente.java</file>
         </group>
     </open-files>

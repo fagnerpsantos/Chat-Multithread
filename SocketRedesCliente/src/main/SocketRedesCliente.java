@@ -40,11 +40,15 @@ public class SocketRedesCliente {
         }
         //</editor-fold>
         //</editor-fold>
+        
+        
+      
+      
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ClienteLogin().setVisible(true);
+                new ClienteLogin().setVisible(true);                
             }
         });
     }

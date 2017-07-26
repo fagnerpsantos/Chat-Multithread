@@ -23,7 +23,7 @@ public class PackageMessage implements Serializable {
     private Date data;
     private int porta;
     private String mensagem;
-    private ArrayList<String> listaOnline = new ArrayList<String>();
+    private ArrayList<String> listaOnline = new ArrayList<>();
     private Acao acao;
     private String socket;
     private String Conect;

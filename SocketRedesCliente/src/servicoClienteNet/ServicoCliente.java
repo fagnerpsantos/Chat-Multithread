@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 public class ServicoCliente {
     private ObjectOutputStream output;
     private Socket cliente;
-    
+        
     public Socket conectar(PackageMessage mensagem){
    
         try {
