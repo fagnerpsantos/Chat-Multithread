@@ -7,11 +7,17 @@ package frame;
 
 import Enum.Acao;
 import bean.PackageMessage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -26,6 +32,9 @@ public class Servidor extends javax.swing.JFrame {
     private PackageMessage mensagem;
     private ServerSocket serverSocket;
     private Socket cliente;
+    private DatagramSocket clienteUdp;
+    final static String INET_ADDR = "224.0.0.3";
+    final static int PORT = 8888;
 
     private ArrayList<String> listaNomes = new ArrayList<>();
     private ArrayList<ObjectOutputStream> listaOutput = new ArrayList<>();
@@ -38,13 +47,14 @@ public class Servidor extends javax.swing.JFrame {
         
     }
 
+
     public void iniciarServidor() {
 
         try {
             System.out.println("Online!");
-
+            //DatagramSocket serverSocketUDP = new DatagramSocket(4444);
             serverSocket = new ServerSocket(4444);
-            
+            //DatagramSocket udpSocket = new DatagramSocket(4445);
 
             new Thread(new aguardaConexao(serverSocket)).start();
         } catch (IOException ex) {
@@ -113,15 +123,37 @@ public class Servidor extends javax.swing.JFrame {
                 enviarMensagem(mensagem, listaOutput.get(i));
             }
         }
+        
 
     }
 
     //Falta implementar
       private void enviarParaTodosCliente(PackageMessage mensagem, ObjectOutputStream output) {
-        mensagem.setAcao(Acao.RECEBA);
-        for (int i = 0; i < listaNomes.size(); i++) {
-                enviarMensagem(mensagem, listaOutput.get(i));
+        try {
+            mensagem.setAcao(Acao.RECEBA);
+            byte[] b = mensagem.getMensagem().getBytes();
+            //endereço de grupo da Classe D
+            InetAddress addr = InetAddress.getByName("239.0.0.1");
+            //socket não confiável para envio e recebimento de dados
+            DatagramSocket ds = new DatagramSocket();
+            //datagrama - envelope de dados
             
+            //envio do datagrama via DatagramSocket
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream (baos);
+            oos.writeObject(mensagem);
+            oos.flush();
+            byte[] bytes = baos.toByteArray();
+            DatagramPacket pkg = new DatagramPacket(bytes, bytes.length, addr, 12347);
+            
+            PackageMessage msg = new PackageMessage();
+            msg.setAcao(Acao.ENVIAR_TODOS);
+            for (int i = 0; i < listaNomes.size(); i++) {                
+                    enviarMensagem(msg, listaOutput.get(i));                
+            }
+            ds.send(pkg);
+        } catch (Exception e) {
+            System.out.println("Nao foi possivel enviar a mensagem");
         }
 
     }
@@ -173,16 +205,12 @@ public class Servidor extends javax.swing.JFrame {
         @Override
         public void run() {
 
-
             while (true) {
                 try {
                     cliente = serverSocket.accept();
-
-                    new Thread(new ListenerSocket(cliente)).start();
-
+                new Thread(new ListenerSocket(cliente)).start();
                 } catch (IOException ex) {
                     Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         }
     }
@@ -191,16 +219,23 @@ public class Servidor extends javax.swing.JFrame {
     private class ListenerSocket implements Runnable {
 
         private Socket cliente;
+        private DatagramSocket clienteUdp;
         private ObjectOutputStream output;
         private ObjectInputStream input;
+        final static String INET_ADDR = "224.0.0.3";
+        final static int PORT = 8888;               
+
 
         public ListenerSocket(Socket cliente) {
             this.cliente = cliente;
         }
 
+        
+
         @Override
         public void run() {
-            try {
+            
+            try {                
                 this.input = new ObjectInputStream(cliente.getInputStream());
                 this.output = new ObjectOutputStream(cliente.getOutputStream());
 
@@ -213,7 +248,11 @@ public class Servidor extends javax.swing.JFrame {
                            mandaOnlines(mensagem, output);
                         }
                     } else if (mensagem.getAcao().equals(Acao.ENVIAR)) {
-                        enviarParaCliente(mensagem, output);
+                        if(mensagem.getEnviarPara().equals("Todos")){
+                            enviarParaTodosCliente(mensagem, output);
+                        }else{
+                            enviarParaCliente(mensagem, output);
+                        }
                     } else if (mensagem.getAcao().equals(Acao.ONLINE)) {
                         mandaOnlines(mensagem, output);
                     } else if (mensagem.getAcao().equals(Acao.DESCONECTAR)) {
@@ -226,4 +265,5 @@ public class Servidor extends javax.swing.JFrame {
 
         }
     }
+}
 }
